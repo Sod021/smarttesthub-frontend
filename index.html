@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base target="_self">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Contract Analyzer | Secure Your Blockchain Code</title>
+    <meta name="description" content="Analyze and secure your smart contracts with our comprehensive security scanner">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#4F46E5",
+                        secondary: "#10B981",
+                        dark: "#1F2937"
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <header class="bg-white shadow-sm">
+        <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-file-contract text-2xl text-primary"></i>
+                <h1 class="text-xl font-bold text-dark">SmartTestHub</h1>
+            </div>
+            <div class="hidden md:flex space-x-6">
+                <a href="index.html" class="text-gray-600 hover:text-primary transition-colors mt-2 font-bold">Home</a>
+                 <!--<a href="#" class="text-gray-600 hover:text-primary transition-colors">Features</a> -->
+                 <!--<a href="#" class="text-gray-600 hover:text-primary transition-colors">Documentation</a> -->
+                <a href="Upload.html" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors">Analyze Now</a>
+            </div>
+            <button class="md:hidden text-gray-600">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="bg-gradient-to-r from-primary to-purple-600 text-white py-20">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="md:w-1/2 mb-10 md:mb-0">
+                        <h1 class="text-4xl md:text-5xl font-bold mb-6">Secure Your Smart Contracts</h1>
+                        <p class="text-xl mb-8 opacity-90">Automated security analysis for Ethereum, Solana, and other blockchain platforms. Detect vulnerabilities before deployment.</p>
+                        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                            <a href="Upload.html" class="bg-white text-primary px-6 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-colors text-center">Analyze Your Contract</a>
+                            <a href="#how-it-works" class="bg-transparent border-2 border-white px-6 py-3 rounded-lg font-medium hover:bg-white hover:bg-opacity-10 transition-colors text-center">How It Works</a>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2 flex justify-center">
+                        <img src="images/cyber-safety-padlock-data-mass-internet-security-lock-information-privacy-low-poly_115739-226.jpg" alt="Smart contract security illustration" class="rounded-xl shadow-2xl" loading="lazy">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section id="how-it-works" class="py-20 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center text-dark mb-4">How It Works</h2>
+                <p class="text-xl text-gray-600 text-center max-w-2xl mx-auto mb-12">Three simple steps to analyze your smart contract security</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-gray-50 p-8 rounded-xl text-center">
+                        <div class="bg-primary bg-opacity-10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <span class="text-primary text-2xl font-bold">1</span>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Upload Your Contract</h3>
+                        <p class="text-gray-600">Upload your Solidity, Vyper, or JSON contract file directly or paste your code</p>
+                    </div>
+                    <div class="bg-gray-50 p-8 rounded-xl text-center">
+                        <div class="bg-primary bg-opacity-10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <span class="text-primary text-2xl font-bold">2</span>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Automated Analysis</h3>
+                        <p class="text-gray-600">Our system scans for 50+ vulnerability patterns and optimization opportunities</p>
+                    </div>
+                    <div class="bg-gray-50 p-8 rounded-xl text-center">
+                        <div class="bg-primary bg-opacity-10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <span class="text-primary text-2xl font-bold">3</span>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Get Detailed Report</h3>
+                        <p class="text-gray-600">Receive comprehensive results with actionable recommendations</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="py-20 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center text-dark mb-4">Trusted by Developers</h2>
+                <p class="text-xl text-gray-600 text-center max-w-2xl mx-auto mb-12">What our users say about our smart contract analyzer</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 rounded-xl shadow-sm">
+                        <div class="flex items-center mb-4">
+                            <img src="https://picsum.photos/100?random=11" alt="User avatar" class="w-12 h-12 rounded-full mr-4" loading="lazy">
+                            <div>
+                                <h4 class="font-semibold">Alex Chen</h4>
+                                <p class="text-gray-500 text-sm">Solidity Developer</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-700">"This tool saved me from deploying a contract with a critical reentrancy vulnerability. The detailed explanation helped me understand and fix the issue quickly."</p>
+                        <div class="flex mt-4 text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-sm">
+                        <div class="flex items-center mb-4">
+                            <img src="https://picsum.photos/100?random=12" alt="User avatar" class="w-12 h-12 rounded-full mr-4" loading="lazy">
+                            <div>
+                                <h4 class="font-semibold">Maria Rodriguez</h4>
+                                <p class="text-gray-500 text-sm">Blockchain Architect</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-700">"The gas optimization suggestions reduced our contract deployment costs by 15%. We now run all our contracts through this analyzer before mainnet deployment."</p>
+                        <div class="flex mt-4 text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-sm">
+                        <div class="flex items-center mb-4">
+                            <img src="https://picsum.photos/100?random=13" alt="User avatar" class="w-12 h-12 rounded-full mr-4" loading="lazy">
+                            <div>
+                                <h4 class="font-semibold">James Wilson</h4>
+                                <p class="text-gray-500 text-sm">Security Auditor</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-700">"As a security professional, I appreciate the depth of analysis. It catches things I sometimes miss in manual reviews. Great for initial screening of contracts."</p>
+                        <div class="flex mt-4 text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section id="upload" class="py-20 bg-primary text-white flex justify-center items-center" style="background: #f5f8ff;">
+            <div class="container mx-auto px-4 flex justify-center">
+                <div class="bg-white rounded-2xl shadow-xl p-10 w-full max-w-5xl text-center border border-gray-200 pt-16 pb-16" style="box-shadow: 0 8px 32px 0 rgba(31, 56, 108, 0.10); min-width:80vw;">
+                    <h2 class="text-3xl font-bold mb-4 text-dark text-center">Ready to secure your smart contracts?</h2>
+                    <p class="text-xl mb-8 max-w-2xl mx-auto opacity-90 text-gray-700 text-center">
+                        Start testing your contracts today and protect your blockchain applications from vulnerabilities and exploits.
+                    </p>
+                    <div class="flex justify-center">
+                        <a href="upload.html" class="bg-gradient-to-r from-blue-600 to-purple-500 text-white px-8 py-4 rounded-lg font-bold text-lg shadow-md hover:from-blue-700 hover:to-purple-600 transition-colors flex items-center gap-2 w-auto">
+                            Get Started Now
+                            <span class="ml-2"><i class="fas fa-arrow-right"></i></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">SmartTestHub</h3>
+                    <p class="text-gray-400">Making blockchain development safer through automated security analysis.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Product</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Features</a></li>
+                        <li><a href="smart-contract-analyzer.html" class="text-gray-400 hover:text-white transition-colors">Analyzer</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Pricing</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Resources</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Documentation</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Blog</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Security Tips</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Company</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Careers</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-400">
+                <p>© 2023 Smart Contract Analyzer. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
