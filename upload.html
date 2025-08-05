@@ -41,72 +41,188 @@
     </header>
 
     <main class="container mx-auto px-4 py-8">
-        <section class="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6 mb-8">
-            <h2 class="text-2xl font-bold text-dark mb-6">Upload Smart Contract</h2>
-            <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                <div class="flex flex-col items-center justify-center">
-                    <i class="fas fa-cloud-upload-alt text-5xl text-primary mb-4"></i>
-                    <p class="text-gray-600 mb-4">Drag and drop your smart contract file here</p>
-                    <p class="text-gray-500 text-sm mb-6">Supported formats: .sol, .vy, .json</p>
-                    <input type="file" id="contract-upload" class="hidden" accept=".sol,.vy,.json">
-                    <label for="contract-upload" class="bg-primary text-white px-6 py-2 rounded-lg cursor-pointer hover:bg-opacity-90 transition-colors">
-                        Select File
+        <div class="flex flex-col md:flex-row max-w-6xl mx-auto gap-8">
+            <!-- Blockchain Options Sidebar -->
+            <aside class="w-full md:w-80 bg-white rounded-2xl shadow-lg p-6 mb-8 md:mb-0">
+                <h2 class="text-xl font-bold text-dark mb-6 text-center">Contract Type</h2>
+                <form id="blockchain-options" class="space-y-4">
+                    <!-- EVM -->
+                    <label class="block cursor-pointer">
+                        <input type="radio" name="blockchain" value="evm" class="peer sr-only" checked>
+                        <div class="flex items-center gap-3 p-4 rounded-lg border-2 peer-checked:border-primary peer-checked:bg-blue-50 transition">
+                            <span class="text-primary text-2xl"><i class="fas fa-code"></i></span>
+                            <div>
+                                <div class="font-semibold text-primary">EVM Compatible</div>
+                                <div class="text-xs text-gray-500">Ethereum, Polygon, BSC (.sol)</div>
+                            </div>
+                        </div>
                     </label>
-                </div>
-            </div>
-        </section>
-
-        <section id="results-section" class="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6 hidden">
-            <h2 class="text-2xl font-bold text-dark mb-6">Analysis Results</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <h3 class="font-semibold text-gray-700 mb-2">Security Score</h3>
-                    <div class="text-3xl font-bold text-primary">85%</div>
-                </div>
-                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <h3 class="font-semibold text-gray-700 mb-2">Vulnerabilities</h3>
-                    <div class="text-3xl font-bold text-secondary">2</div>
-                </div>
-                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <h3 class="font-semibold text-gray-700 mb-2">Gas Efficiency</h3>
-                    <div class="text-3xl font-bold text-yellow-500">Medium</div>
-                </div>
-            </div>
-
-            <div class="mb-8">
-                <h3 class="text-xl font-semibold text-dark mb-4">Vulnerability Details</h3>
-                <div class="space-y-4">
-                    <div class="p-4 bg-red-50 border-l-4 border-red-500 rounded-r">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h4 class="font-medium text-red-800">Reentrancy Vulnerability</h4>
-                                <p class="text-sm text-red-600 mt-1">Potential for reentrancy attacks detected in withdraw() function</p>
+                    <!-- Non-EVM Option with custom platform selection UI -->
+                    <label class="block cursor-pointer">
+                        <input type="radio" name="blockchain" value="nonevm" class="peer sr-only" id="nonevm-radio">
+                        <div class="flex flex-col gap-2 p-0">
+                            <div class="flex items-center gap-3 p-4 rounded-lg border-2 peer-checked:border-purple-500 peer-checked:bg-purple-50 transition">
+                                <span class="text-purple-500 text-2xl"><i class="fas fa-bolt"></i></span>
+                                <div>
+                                    <div class="font-semibold text-purple-500">Non-EVM</div>
+                                    <div class="text-xs text-gray-500">Multiple blockchain platforms</div>
+                                </div>
                             </div>
-                            <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">Critical</span>
+                            <!-- Custom platform selection, shown only if Non-EVM is selected -->
+                            <div id="platform-select-container" class="hidden mt-6">
+                                <hr class="mb-4">
+                                <div class="text-center font-semibold text-dark mb-4">Select Platform</div>
+                                <div class="space-y-4">
+                                    <!-- Rust -->
+                                    <label class="block cursor-pointer">
+                                        <input type="radio" name="nonevm-platform" value="rust" class="peer sr-only" checked>
+                                        <div class="flex items-center gap-3 p-4 rounded-lg border-2 peer-checked:border-purple-500 peer-checked:bg-purple-100 transition">
+                                            <span class="text-purple-500 text-2xl"><i class="fas fa-bolt"></i></span>
+                                            <div>
+                                                <div class="font-semibold text-purple-500">Rust</div>
+                                                <div class="text-xs text-gray-500">Rust-based smart contracts<br><span class="text-xs text-gray-400">.rs</span></div>
+                                            </div>
+                                        </div>
+                                    </label>
+                                    <!-- Starknet -->
+                                    <label class="block cursor-pointer">
+                                        <input type="radio" name="nonevm-platform" value="starknet" class="peer sr-only">
+                                        <div class="flex items-center gap-3 p-4 rounded-lg border-2 peer-checked:border-yellow-500 peer-checked:bg-yellow-50 transition">
+                                            <span class="text-yellow-500 text-2xl"><i class="fas fa-gear"></i></span>
+                                            <div>
+                                                <div class="font-semibold text-yellow-500">StarkNet</div>
+                                                <div class="text-xs text-gray-500">Cairo smart contracts<br><span class="text-xs text-gray-400">.cairo</span></div>
+                                            </div>
+                                        </div>
+                                    </label>
+                                    <!-- Algorand -->
+                                    <label class="block cursor-pointer">
+                                        <input type="radio" name="nonevm-platform" value="algorand" class="peer sr-only">
+                                        <div class="flex items-center gap-3 p-4 rounded-lg border-2 peer-checked:border-green-500 peer-checked:bg-green-50 transition">
+                                            <span class="text-green-500 text-2xl"><i class="fas fa-code"></i></span>
+                                            <div>
+                                                <div class="font-semibold text-green-500">Algorand</div>
+                                                <div class="text-xs text-gray-500">Python-based smart contracts<br><span class="text-xs text-gray-400">.py</span></div>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </label>
+                    <!-- Algorand (standalone, can be removed if only dropdown is needed) -->
+                    <!--
+                    <label class="block cursor-pointer">
+                        <input type="radio" name="blockchain" value="algorand" class="peer sr-only">
+                        <div class="flex items-center gap-3 p-4 rounded-lg border-2 peer-checked:border-green-500 peer-checked:bg-green-50 transition">
+                            <span class="text-green-500 text-2xl"><i class="fas fa-leaf"></i></span>
+                            <div>
+                                <div class="font-semibold text-green-500">Algorand</div>
+                                <div class="text-xs text-gray-500">Algorand Smart Contracts (.teal, .py)</div>
+                            </div>
+                        </div>
+                    </label>
+                    -->
+                    <!-- Starknet (standalone, can be removed if only dropdown is needed) -->
+                    <!--
+                    <label class="block cursor-pointer">
+                        <input type="radio" name="blockchain" value="starknet" class="peer sr-only">
+                        <div class="flex items-center gap-3 p-4 rounded-lg border-2 peer-checked:border-yellow-500 peer-checked:bg-yellow-50 transition">
+                            <span class="text-yellow-500 text-2xl"><i class="fas fa-star"></i></span>
+                            <div>
+                                <div class="font-semibold text-yellow-500">Starknet</div>
+                                <div class="text-xs text-gray-500">Cairo Smart Contracts (.cairo)</div>
+                            </div>
+                        </div>
+                    </label>
+                    -->
+                </form>
+                <div class="mt-6">
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800 mb-3">
+                        <strong>Server-Side Analysis</strong>
+                        <ul class="list-disc pl-5 mt-2 space-y-1">
+                            <li>Advanced vulnerability detection</li>
+                            <li>Blockchain simulation testing</li>
+                            <li>Gas optimization analysis</li>
+                            <li>Professional audit reports</li>
+                        </ul>
+                    </div>
+                    <div class="bg-pink-50 border border-pink-200 rounded-lg p-4 text-xs text-pink-700 text-center">
+                        <strong>Supported Platforms</strong><br>
+                        Ethereum, Polygon, BSC, Solana, Algorand, Starknet, Avalanche
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Upload Section -->
+            <div class="flex-1">
+                <section class="mb-8" id="upload-section">
+                    <div id="drop-area" class="rounded-2xl border-2 border-dashed border-blue-200 bg-white shadow-lg p-10 flex flex-col items-center justify-center text-center transition-all" style="min-height: 260px;">
+                        <div id="upload-default" class="flex flex-col items-center">
+                            <div class="flex items-center justify-center w-16 h-16 rounded-full bg-blue-50 mb-4">
+                                <i class="fas fa-upload text-3xl text-blue-400"></i>
+                            </div>
+                            <div class="text-xl font-semibold text-dark mb-2">Drag and drop your contract file</div>
+                            <div class="text-base text-gray-500 mb-2">
+                                or <label for="contract-upload" class="text-blue-600 underline cursor-pointer">browse to choose a file</label>
+                            </div>
+                            <div class="text-xs text-gray-400 mb-2" id="file-support-text">
+                                Supports: <span class="font-mono">.rs</span> files for Rust (max 10MB)
+                            </div>
+                            <input type="file" id="contract-upload" class="hidden" accept=".rs">
+                        </div>
+                        <div id="upload-preview" class="hidden flex-col items-center">
+                            <div class="flex items-center justify-center w-16 h-16 rounded-full bg-green-50 mb-4 mx-auto">
+                                <i class="fas fa-file-alt text-3xl text-green-400"></i>
+                            </div>
+                            <div class="text-lg font-semibold text-dark mb-1" id="file-name"></div>
+                            <div class="text-sm text-gray-500 mb-1" id="file-size"></div>
+                            <div class="text-xs text-gray-400 mb-2" id="ready-analysis-text">Ready for Rust analysis</div>
                         </div>
                     </div>
-                    <div class="p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded-r">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h4 class="font-medium text-yellow-800">Unchecked Call Return Value</h4>
-                                <p class="text-sm text-yellow-600 mt-1">Return value of external call not checked in transferFunds()</p>
-                            </div>
-                            <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded">Medium</span>
+                    <div id="file-valid" class="hidden mt-4 mb-4 rounded-lg bg-white shadow flex items-center px-4 py-3 border-l-4 border-green-400">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                        <span class="text-green-700 text-sm"><span id="file-valid-msg"></span></span>
+                    </div>
+                    <button id="analyze-btn" type="button" class="w-full mt-6 py-4 rounded-lg bg-gradient-to-r from-blue-400 to-purple-400 text-white font-bold text-lg shadow-md focus:outline-none transition opacity-50 cursor-not-allowed">
+                        Select a file to continue
+                    </button>
+                </section>
+
+                <section id="results-section" class="bg-white rounded-xl shadow-md overflow-hidden p-6 hidden">
+                    <h2 class="text-2xl font-bold text-dark mb-6">Analysis Results</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <h3 class="font-semibold text-gray-700 mb-2">Security Score</h3>
+                            <div id="score" class="text-3xl font-bold text-primary">--</div>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <h3 class="font-semibold text-gray-700 mb-2">Vulnerabilities</h3>
+                            <div id="vulnerabilities" class="text-3xl font-bold text-secondary">--</div>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <h3 class="font-semibold text-gray-700 mb-2">Gas Efficiency</h3>
+                            <div id="gas-efficiency" class="text-3xl font-bold text-yellow-500">--</div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <div>
-                <h3 class="text-xl font-semibold text-dark mb-4">Optimization Suggestions</h3>
-                <ul class="list-disc pl-5 space-y-2 text-gray-700">
-                    <li>Consider using uint256 instead of uint8 for storage variables to reduce gas costs</li>
-                    <li>Merge similar require statements to reduce bytecode size</li>
-                    <li>Use view/pure modifiers where possible to save gas</li>
-                </ul>
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-dark mb-4">Vulnerability Details</h3>
+                        <div id="vulnerability-details" class="space-y-4">
+                            <!-- Vulnerability details will be injected here -->
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-semibold text-dark mb-4">Optimization Suggestions</h3>
+                        <ul id="optimization-suggestions" class="list-disc pl-5 space-y-2 text-gray-700">
+                            <!-- Suggestions will be injected here -->
+                        </ul>
+                    </div>
+                </section>
             </div>
-        </section>
+        </div>
     </main>
 
     <footer class="bg-dark text-white py-8 mt-12">
@@ -135,50 +251,78 @@
     </footer>
 
     <script>
-        // File upload handling
+        // Elements
+        const dropArea = document.getElementById('drop-area');
         const fileInput = document.getElementById('contract-upload');
-        const resultsSection = document.getElementById('results-section');
-        
-        fileInput.addEventListener('change', async function(e) {
-            if (e.target.files.length > 0) {
-                const file = e.target.files[0];
-                const formData = new FormData();
-                formData.append('contract', file);
+        const uploadDefault = document.getElementById('upload-default');
+        const uploadPreview = document.getElementById('upload-preview');
+        const fileNameEl = document.getElementById('file-name');
+        const fileSizeEl = document.getElementById('file-size');
+        const fileValid = document.getElementById('file-valid');
+        const fileValidMsg = document.getElementById('file-valid-msg');
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const fileSupportText = document.getElementById('file-support-text');
+        const readyAnalysisText = document.getElementById('ready-analysis-text');
+        const blockchainOptions = document.getElementById('blockchain-options');
+        let selectedFile = null;
 
-                // Show loading indicator if you want
+        // File type mapping
+        const blockchainFileTypes = {
+            evm: { accept: '.sol', label: '.sol', platform: 'EVM', analysis: 'Ready for EVM analysis', btn: 'Start EVM Analysis' },
+            rust: { accept: '.rs', label: '.rs', platform: 'Rust', analysis: 'Ready for Rust analysis', btn: 'Start Rust Analysis' },
+            algorand: { accept: '.py', label: '.py', platform: 'Algorand', analysis: 'Ready for Algorand analysis', btn: 'Start Algorand Analysis' },
+            starknet: { accept: '.cairo', label: '.cairo', platform: 'StarkNet', analysis: 'Ready for StarkNet analysis', btn: 'Start StarkNet Analysis' }
+        };
 
-                try {
-                    const response = await fetch('http://YOUR_BACKEND_URL/api/analyze', {
-                        method: 'POST',
-                        body: formData
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('Analysis failed');
-                    }
-
-                    const result = await response.json();
-
-                    // TODO: Update the DOM with the analysis result
-                    // Example: show resultsSection and fill in result data
-                    resultsSection.classList.remove('hidden');
-                    // You can now use result to update the UI, e.g.:
-                    // document.getElementById('score').textContent = result.score;
-                    // ...etc...
-
-                    window.scrollTo({
-                        top: resultsSection.offsetTop - 20,
-                        behavior: 'smooth'
-                    });
-                } catch (err) {
-                    alert('Error: ' + err.message);
+        function getSelectedType() {
+            let selectedBlockchain = blockchainOptions.querySelector('input[name="blockchain"]:checked').value;
+            if (selectedBlockchain === 'nonevm') {
+                const platform = document.querySelector('input[name="nonevm-platform"]:checked');
+                if (platform && blockchainFileTypes[platform.value]) {
+                    return blockchainFileTypes[platform.value];
                 }
+                // Default to rust if none selected
+                return blockchainFileTypes.rust;
+            } else if (blockchainFileTypes[selectedBlockchain]) {
+                return blockchainFileTypes[selectedBlockchain];
             }
+            // Default fallback
+            return blockchainFileTypes.rust;
+        }
+
+        function updateUploadArea() {
+            const type = getSelectedType();
+            fileInput.setAttribute('accept', type.accept);
+            fileSupportText.innerHTML = `Supports: <span class="font-mono">${type.label}</span> files for ${type.platform} (max 10MB)`;
+            readyAnalysisText.textContent = type.analysis;
+
+            // Reset UI if blockchain/platform changes
+            fileInput.value = '';
+            selectedFile = null;
+            uploadDefault.classList.remove('hidden');
+            uploadPreview.classList.add('hidden');
+            dropArea.classList.remove('border-green-400');
+            dropArea.classList.add('border-blue-200');
+            fileValid.classList.add('hidden');
+            analyzeBtn.textContent = "Select a file to continue";
+            analyzeBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            analyzeBtn.classList.remove('cursor-pointer');
+        }
+
+        // Listen for blockchain and platform changes
+        const blockchainRadios = document.querySelectorAll('input[name="blockchain"]');
+        blockchainRadios.forEach(radio => {
+            radio.addEventListener('change', updateUploadArea);
+        });
+        const nonevmPlatforms = document.querySelectorAll('input[name="nonevm-platform"]');
+        nonevmPlatforms.forEach(radio => {
+            radio.addEventListener('change', updateUploadArea);
         });
 
-        // Drag and drop functionality
-        const dropArea = document.querySelector('.border-dashed');
-        
+        // Call once on page load to set initial state
+        updateUploadArea();
+
+        // Drag and drop events
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             dropArea.addEventListener(eventName, preventDefaults, false);
         });
@@ -189,32 +333,151 @@
         }
 
         ['dragenter', 'dragover'].forEach(eventName => {
-            dropArea.addEventListener(eventName, highlight, false);
+            dropArea.addEventListener(eventName, () => {
+                dropArea.classList.add('border-green-400');
+            }, false);
         });
 
         ['dragleave', 'drop'].forEach(eventName => {
-            dropArea.addEventListener(eventName, unhighlight, false);
+            dropArea.addEventListener(eventName, () => {
+                dropArea.classList.remove('border-green-400');
+            }, false);
         });
-
-        function highlight() {
-            dropArea.classList.add('border-primary', 'bg-blue-50');
-        }
-
-        function unhighlight() {
-            dropArea.classList.remove('border-primary', 'bg-blue-50');
-        }
 
         dropArea.addEventListener('drop', handleDrop, false);
 
         function handleDrop(e) {
             const dt = e.dataTransfer;
             const files = dt.files;
-            fileInput.files = files;
-            
-            // Trigger change event
-            const event = new Event('change');
-            fileInput.dispatchEvent(event);
+            if (files.length > 0) {
+                fileInput.files = files;
+                triggerFileChange();
+            }
         }
+
+        // Button triggers file input or upload
+        analyzeBtn.addEventListener('click', function() {
+            if (!selectedFile) {
+                fileInput.click();
+            } else {
+                uploadFile();
+            }
+        });
+
+        // File input change
+        fileInput.addEventListener('change', triggerFileChange);
+
+        function triggerFileChange() {
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                selectedFile = file;
+                // Show preview
+                uploadDefault.classList.add('hidden');
+                uploadPreview.classList.remove('hidden');
+                fileNameEl.textContent = file.name;
+                fileSizeEl.textContent = (file.size / 1024).toFixed(1) + ' KB • ' + getSelectedType().analysis;
+                dropArea.classList.remove('border-blue-200');
+                dropArea.classList.add('border-green-400');
+
+                // Show valid message
+                fileValid.classList.remove('hidden');
+                fileValidMsg.textContent = `File "${file.name}" is valid and ready for upload.`;
+
+                // Enable button
+                analyzeBtn.textContent = getSelectedType().btn;
+                analyzeBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                analyzeBtn.classList.add('cursor-pointer');
+            }
+        }
+
+        // Upload logic (send file to backend)
+        function uploadFile() {
+            if (!selectedFile) return;
+            const formData = new FormData();
+            formData.append('contract', selectedFile);
+
+            // Get selected blockchain type
+            let selectedBlockchain = blockchainOptions.querySelector('input[name="blockchain"]:checked').value;
+            if (selectedBlockchain === 'nonevm') {
+                const platform = document.querySelector('input[name="nonevm-platform"]:checked');
+                selectedBlockchain = platform ? platform.value : '';
+            }
+            formData.append('blockchain', selectedBlockchain);
+
+            analyzeBtn.disabled = true;
+            analyzeBtn.textContent = "Analyzing...";
+
+            fetch('http://YOUR_BACKEND_URL/api/analyze', {
+                method: 'POST',
+                body: formData
+            })
+            .then(async response => {
+                analyzeBtn.disabled = false;
+                analyzeBtn.textContent = getSelectedType().btn;
+                if (!response.ok) throw new Error('Analysis failed');
+                const result = await response.json();
+                // Show results section, etc.
+                resultsSection.classList.remove('hidden');
+                scoreEl.textContent = result.score ?? '--';
+                vulnerabilitiesEl.textContent = result.vulnerabilities?.length ?? '--';
+                gasEfficiencyEl.textContent = result.gasEfficiency ?? '--';
+
+                // Vulnerability Details
+                vulnerabilityDetailsEl.innerHTML = '';
+                if (result.vulnerabilities && result.vulnerabilities.length > 0) {
+                    result.vulnerabilities.forEach(vul => {
+                        const color = vul.severity === 'Critical' ? 'red' : (vul.severity === 'Medium' ? 'yellow' : 'gray');
+                        vulnerabilityDetailsEl.innerHTML += `
+                            <div class="p-4 bg-${color}-50 border-l-4 border-${color}-500 rounded-r">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h4 class="font-medium text-${color}-800">${vul.title}</h4>
+                                        <p class="text-sm text-${color}-600 mt-1">${vul.description}</p>
+                                    </div>
+                                    <span class="bg-${color}-100 text-${color}-800 text-xs px-2 py-1 rounded">${vul.severity}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    vulnerabilityDetailsEl.innerHTML = '<p class="text-gray-500">No vulnerabilities found.</p>';
+                }
+
+                // Optimization Suggestions
+                optimizationSuggestionsEl.innerHTML = '';
+                if (result.optimizationSuggestions && result.optimizationSuggestions.length > 0) {
+                    result.optimizationSuggestions.forEach(suggestion => {
+                        optimizationSuggestionsEl.innerHTML += `<li>${suggestion}</li>`;
+                    });
+                } else {
+                    optimizationSuggestionsEl.innerHTML = '<li class="text-gray-500">No suggestions available.</li>';
+                }
+
+                window.scrollTo({
+                    top: resultsSection.offsetTop - 20,
+                    behavior: 'smooth'
+                });
+            })
+            .catch(err => {
+                analyzeBtn.disabled = false;
+                analyzeBtn.textContent = getSelectedType().btn;
+                alert('Error: ' + err.message);
+            });
+        }
+
+        // Sidebar dropdown logic for Non-EVM
+        const nonevmRadio = document.getElementById('nonevm-radio');
+        const platformSelectContainer = document.getElementById('platform-select-container');
+
+        blockchainRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (nonevmRadio.checked) {
+                    platformSelectContainer.classList.remove('hidden');
+                } else {
+                    platformSelectContainer.classList.add('hidden');
+                }
+            });
+        });
     </script>
 </body>
 </html>
