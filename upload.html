@@ -449,15 +449,158 @@
                 if (!response.ok) throw new Error('Analysis failed');
                 const result = await response.json();
 
-                // Show results section
                 resultsSection.classList.remove('hidden');
 
-                // Display the raw JSON response for debugging
-                vulnerabilityDetailsEl.innerHTML = `
-                    <pre style="white-space:pre-wrap;word-break:break-all;background:#f3f4f6;padding:1em;border-radius:0.5em;">
-    ${JSON.stringify(result, null, 2)}
-                    </pre>
-                `;
+                // Helper for section rendering
+                function renderSection(title, contentHtml) {
+                    return `
+                        <div class="mb-8">
+                            <h3 class="text-xl font-semibold text-dark mb-4">${title}</h3>
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 text-sm">${contentHtml}</div>
+                        </div>
+                    `;
+                }
+
+                // --- Overview ---
+                let overviewHtml = '';
+                if (result['OVERVIEW']) {
+                    const o = result['OVERVIEW'];
+                    overviewHtml += `<strong>File Name:</strong> ${o['File Name'] || ''}<br>`;
+                    overviewHtml += `<strong>Contract Identifier:</strong> ${o['Contract Identifier'] || ''}<br>`;
+                    overviewHtml += `<strong>Size:</strong> ${o['Size'] || ''}<br>`;
+                    overviewHtml += `<strong>Lines of Code:</strong> ${o['Lines of Code'] || ''}<br>`;
+                    overviewHtml += `<strong>Contract Type:</strong> ${o['Contract Type'] || ''}<br><br>`;
+                    overviewHtml += `<strong>Compilation Status:</strong> ${o['Compilation Status'] || ''}<br>`;
+                    overviewHtml += `<strong>Testing Status:</strong> ${o['Testing Status'] || ''}<br>`;
+                    overviewHtml += `<strong>Security Status:</strong> ${o['Security Status'] || ''}<br>`;
+                    overviewHtml += `<strong>Coverage Status:</strong> ${o['Coverage Status'] || ''}<br>`;
+                    overviewHtml += `<strong>Summary:</strong> <ul class="list-disc pl-5">`;
+                    if (Array.isArray(o['Summary of all tools that ran and their overall results'])) {
+                        o['Summary of all tools that ran and their overall results'].forEach(item => {
+                            overviewHtml += `<li>${item}</li>`;
+                        });
+                    }
+                    overviewHtml += `</ul>`;
+                }
+
+                // --- Testing ---
+                let testingHtml = '';
+                if (result['TESTING']) {
+                    const t = result['TESTING'];
+                    testingHtml += `<strong>Tests Passed:</strong> ${t['Tests Passed'] || ''}<br>`;
+                    testingHtml += `<strong>Tests Failed:</strong> ${t['Tests Failed'] || ''}<br>`;
+                    testingHtml += `<strong>Tests Skipped:</strong> ${t['Tests Skipped'] || ''}<br>`;
+                    testingHtml += `<strong>Total Tests:</strong> ${t['Total Tests'] || ''}<br><br>`;
+                    testingHtml += `<strong>Test Coverage Metrics:</strong><br>`;
+                    testingHtml += `Overall: ${t['Overall %'] || 'N/A'}, Statement: ${t['Statement %'] || 'N/A'}, Branch: ${t['Branch %'] || 'N/A'}, Function: ${t['Function %'] || 'N/A'}<br>`;
+                    if (t['Reason for missing coverage']) {
+                        testingHtml += `<strong>Reason for missing coverage:</strong> ${t['Reason for missing coverage']}<br>`;
+                    }
+                    if (Array.isArray(t['Testing recommendations and missing test scenarios'])) {
+                        testingHtml += `<strong>Recommendations:</strong><ul class="list-disc pl-5">`;
+                        t['Testing recommendations and missing test scenarios'].forEach(item => {
+                            testingHtml += `<li>${item}</li>`;
+                        });
+                        testingHtml += `</ul>`;
+                    }
+                }
+
+                // --- Security ---
+                let securityHtml = '';
+                if (result['SECURITY']) {
+                    const s = result['SECURITY'];
+                    securityHtml += `<strong>Critical:</strong> ${s['Critical'] || 0}, <strong>High:</strong> ${s['High'] || 0}, <strong>Medium:</strong> ${s['Medium'] || 0}, <strong>Low:</strong> ${s['Low'] || 0}<br>`;
+                    securityHtml += `<strong>Security Score Assessment:</strong> ${s['Security Score assessment'] || ''}<br>`;
+                    if (Array.isArray(s['Detailed vulnerability findings with severity, description, and fix recommendations'])) {
+                        securityHtml += `<strong>Vulnerability Findings:</strong><ul class="list-disc pl-5">`;
+                        s['Detailed vulnerability findings with severity, description, and fix recommendations'].forEach(vul => {
+                            securityHtml += `<li>
+                                <strong>${vul['severity'] || ''}:</strong> ${vul['title'] || ''}<br>
+                                <span class="text-xs">${vul['description'] || ''}</span><br>
+                                <span class="text-xs text-blue-700"><strong>Recommendation:</strong> ${vul['recommendation'] || ''}</span>
+                            </li>`;
+                        });
+                        securityHtml += `</ul>`;
+                    }
+                    if (Array.isArray(s['Security best practices recommendations'])) {
+                        securityHtml += `<strong>Best Practices:</strong><ul class="list-disc pl-5">`;
+                        s['Security best practices recommendations'].forEach(item => {
+                            securityHtml += `<li>${item}</li>`;
+                        });
+                        securityHtml += `</ul>`;
+                    }
+                }
+
+                // --- Code Quality ---
+                let codeQualityHtml = '';
+                if (result['CODE QUALITY']) {
+                    const c = result['CODE QUALITY'];
+                    codeQualityHtml += `<strong>Score:</strong> ${c['Score'] || ''}<br>`;
+                    codeQualityHtml += `<strong>Assessment:</strong> ${c['Overall Assessment'] || ''}<br>`;
+                    if (Array.isArray(c['Code improvement suggestions'])) {
+                        codeQualityHtml += `<strong>Improvement Suggestions:</strong><ul class="list-disc pl-5">`;
+                        c['Code improvement suggestions'].forEach(item => {
+                            codeQualityHtml += `<li>${item}</li>`;
+                        });
+                        codeQualityHtml += `</ul>`;
+                    }
+                }
+
+                // --- Performance ---
+                let performanceHtml = '';
+                if (result['PERFORMANCE']) {
+                    const p = result['PERFORMANCE'];
+                    performanceHtml += `<strong>Deployment Cost:</strong> ${p['Deployment Cost'] || 'N/A'}<br>`;
+                    performanceHtml += `<strong>Average Function Gas Usage:</strong> ${p['Average Function Gas Usage'] || 'N/A'}<br>`;
+                    if (Array.isArray(p['Optimization Suggestions'])) {
+                        performanceHtml += `<strong>Optimization Suggestions:</strong><ul class="list-disc pl-5">`;
+                        p['Optimization Suggestions'].forEach(item => {
+                            performanceHtml += `<li>${item}</li>`;
+                        });
+                        performanceHtml += `</ul>`;
+                    }
+                    performanceHtml += `<strong>Efficiency Analysis:</strong> ${p['Efficiency analysis and resource usage'] || ''}<br>`;
+                }
+
+                // --- AI Summary ---
+                let aiSummaryHtml = '';
+                if (result['AI SUMMARY']) {
+                    const a = result['AI SUMMARY'];
+                    aiSummaryHtml += `<strong>Overall Assessment:</strong> ${a['Overall Assessment'] || ''}<br>`;
+                    aiSummaryHtml += `<strong>Risk Level:</strong> ${a['Risk Level'] || ''}<br>`;
+                    aiSummaryHtml += `<strong>Deployment Readiness:</strong> ${a['Deployment Readiness'] || ''}<br>`;
+                    if (Array.isArray(a['Key Findings'])) {
+                        aiSummaryHtml += `<strong>Key Findings:</strong><ul class="list-disc pl-5">`;
+                        a['Key Findings'].forEach(item => {
+                            aiSummaryHtml += `<li>${item}</li>`;
+                        });
+                        aiSummaryHtml += `</ul>`;
+                    }
+                    if (Array.isArray(a['Priority Actions'])) {
+                        aiSummaryHtml += `<strong>Priority Actions:</strong><ul class="list-disc pl-5">`;
+                        a['Priority Actions'].forEach(item => {
+                            aiSummaryHtml += `<li>${item}</li>`;
+                        });
+                        aiSummaryHtml += `</ul>`;
+                    }
+                    if (Array.isArray(a['Recommendations'])) {
+                        aiSummaryHtml += `<strong>Recommendations:</strong><ul class="list-disc pl-5">`;
+                        a['Recommendations'].forEach(item => {
+                            aiSummaryHtml += `<li>${item}</li>`;
+                        });
+                        aiSummaryHtml += `</ul>`;
+                    }
+                }
+
+                // Render all sections
+                vulnerabilityDetailsEl.innerHTML = 
+                    renderSection('Overview', overviewHtml) +
+                    renderSection('Testing', testingHtml) +
+                    renderSection('Security', securityHtml) +
+                    renderSection('Code Quality', codeQualityHtml) +
+                    renderSection('Performance', performanceHtml) +
+                    renderSection('AI Summary', aiSummaryHtml);
+
                 // Optionally clear other fields
                 scoreEl.textContent = '--';
                 vulnerabilitiesEl.textContent = '--';
