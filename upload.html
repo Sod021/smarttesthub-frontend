@@ -441,25 +441,28 @@
                 analyzeBtn.textContent = getSelectedType().btn;
                 if (!response.ok) throw new Error('Analysis failed');
                 const result = await response.json();
-                // Show results section, etc.
+
+                // Show results section
                 resultsSection.classList.remove('hidden');
+
+                // Display main stats
                 scoreEl.textContent = result.score ?? '--';
-                vulnerabilitiesEl.textContent = result.vulnerabilities?.length ?? '--';
+                vulnerabilitiesEl.textContent = Array.isArray(result.vulnerabilities) ? result.vulnerabilities.length : '--';
                 gasEfficiencyEl.textContent = result.gasEfficiency ?? '--';
 
                 // Vulnerability Details
                 vulnerabilityDetailsEl.innerHTML = '';
-                if (result.vulnerabilities && result.vulnerabilities.length > 0) {
+                if (Array.isArray(result.vulnerabilities) && result.vulnerabilities.length > 0) {
                     result.vulnerabilities.forEach(vul => {
                         const color = vul.severity === 'Critical' ? 'red' : (vul.severity === 'Medium' ? 'yellow' : 'gray');
                         vulnerabilityDetailsEl.innerHTML += `
                             <div class="p-4 bg-${color}-50 border-l-4 border-${color}-500 rounded-r">
                                 <div class="flex justify-between items-start">
                                     <div>
-                                        <h4 class="font-medium text-${color}-800">${vul.title}</h4>
-                                        <p class="text-sm text-${color}-600 mt-1">${vul.description}</p>
+                                        <h4 class="font-medium text-${color}-800">${vul.title ?? 'Vulnerability'}</h4>
+                                        <p class="text-sm text-${color}-600 mt-1">${vul.description ?? ''}</p>
                                     </div>
-                                    <span class="bg-${color}-100 text-${color}-800 text-xs px-2 py-1 rounded">${vul.severity}</span>
+                                    <span class="bg-${color}-100 text-${color}-800 text-xs px-2 py-1 rounded">${vul.severity ?? ''}</span>
                                 </div>
                             </div>
                         `;
@@ -470,7 +473,7 @@
 
                 // Optimization Suggestions
                 optimizationSuggestionsEl.innerHTML = '';
-                if (result.optimizationSuggestions && result.optimizationSuggestions.length > 0) {
+                if (Array.isArray(result.optimizationSuggestions) && result.optimizationSuggestions.length > 0) {
                     result.optimizationSuggestions.forEach(suggestion => {
                         optimizationSuggestionsEl.innerHTML += `<li>${suggestion}</li>`;
                     });
@@ -478,6 +481,7 @@
                     optimizationSuggestionsEl.innerHTML = '<li class="text-gray-500">No suggestions available.</li>';
                 }
 
+                // Optionally, scroll to results
                 window.scrollTo({
                     top: resultsSection.offsetTop - 20,
                     behavior: 'smooth'
