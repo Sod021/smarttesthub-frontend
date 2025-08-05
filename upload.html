@@ -452,36 +452,64 @@
                 // Show results section
                 resultsSection.classList.remove('hidden');
 
-                // Display main stats
-                scoreEl.textContent = result.score ?? '--';
-                vulnerabilitiesEl.textContent = Array.isArray(result.vulnerabilities) ? result.vulnerabilities.length : '--';
-                gasEfficiencyEl.textContent = result.gasEfficiency ?? '--';
+                // --- Security Score (from code quality score or AI summary) ---
+                scoreEl.textContent = result['CODE QUALITY']?.Score || result['AI SUMMARY']?.['Overall Assessment'] || '--';
 
-                // Vulnerability Details
+                // --- Vulnerabilities (sum of all severities) ---
+                let vulnCount = 0;
+                if (result.SECURITY) {
+                    vulnCount += Number(result.SECURITY.Critical || 0);
+                    vulnCount += Number(result.SECURITY.High || 0);
+                    vulnCount += Number(result.SECURITY.Medium || 0);
+                    vulnCount += Number(result.SECURITY.Low || 0);
+                }
+                vulnerabilitiesEl.textContent = vulnCount || '--';
+
+                // --- Gas Efficiency (from PERFORMANCE section if available) ---
+                gasEfficiencyEl.textContent = result.PERFORMANCE?.['Efficiency analysis and resource usage'] || '--';
+
+                // --- Vulnerability Details ---
                 vulnerabilityDetailsEl.innerHTML = '';
-                if (Array.isArray(result.vulnerabilities) && result.vulnerabilities.length > 0) {
-                    result.vulnerabilities.forEach(vul => {
-                        const color = vul.severity === 'Critical' ? 'red' : (vul.severity === 'Medium' ? 'yellow' : 'gray');
-                        vulnerabilityDetailsEl.innerHTML += `
-                            <div class="p-4 bg-${color}-50 border-l-4 border-${color}-500 rounded-r">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <h4 class="font-medium text-${color}-800">${vul.title ?? 'Vulnerability'}</h4>
-                                        <p class="text-sm text-${color}-600 mt-1">${vul.description ?? ''}</p>
+                if (result.SECURITY && Array.isArray(result.SECURITY['Detailed vulnerability findings with severity, description, and fix recommendations'])) {
+                    const findings = result.SECURITY['Detailed vulnerability findings with severity, description, and fix recommendations'];
+                    if (findings.length > 0) {
+                        findings.forEach(vul => {
+                            // Try to extract severity and color
+                            let severity = vul['severity'] || (vul['Low: Outdated Solidity Version Pragma'] ? 'Low' : 'Low');
+                            let title = vul['title'] || vul['Low: Outdated Solidity Version Pragma'] || vul['Low: Naming Convention Violation (Parameter)'] || 'Vulnerability';
+                            let description = vul['description'] || vul['Description'] || '';
+                            let recommendation = vul['recommendation'] || vul['Recommendation'] || '';
+                            const color = severity === 'Critical' ? 'red' : (severity === 'Medium' ? 'yellow' : 'gray');
+                            vulnerabilityDetailsEl.innerHTML += `
+                                <div class="p-4 bg-${color}-50 border-l-4 border-${color}-500 rounded-r">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h4 class="font-medium text-${color}-800">${title}</h4>
+                                            <p class="text-sm text-${color}-600 mt-1">${description}</p>
+                                            <p class="text-xs text-${color}-600 mt-1"><strong>Recommendation:</strong> ${recommendation}</p>
+                                        </div>
+                                        <span class="bg-${color}-100 text-${color}-800 text-xs px-2 py-1 rounded">${severity}</span>
                                     </div>
-                                    <span class="bg-${color}-100 text-${color}-800 text-xs px-2 py-1 rounded">${vul.severity ?? ''}</span>
                                 </div>
-                            </div>
-                        `;
-                    });
+                            `;
+                        });
+                    } else {
+                        vulnerabilityDetailsEl.innerHTML = '<p class="text-gray-500">No vulnerabilities found.</p>';
+                    }
                 } else {
                     vulnerabilityDetailsEl.innerHTML = '<p class="text-gray-500">No vulnerabilities found.</p>';
                 }
 
-                // Optimization Suggestions
+                // --- Optimization Suggestions (from CODE QUALITY or AI SUMMARY) ---
                 optimizationSuggestionsEl.innerHTML = '';
-                if (Array.isArray(result.optimizationSuggestions) && result.optimizationSuggestions.length > 0) {
-                    result.optimizationSuggestions.forEach(suggestion => {
+                let suggestions = [];
+                if (result['CODE QUALITY']?.['Code improvement suggestions']) {
+                    suggestions = result['CODE QUALITY']['Code improvement suggestions'];
+                } else if (result['AI SUMMARY']?.['Priority Actions']) {
+                    suggestions = result['AI SUMMARY']['Priority Actions'];
+                }
+                if (Array.isArray(suggestions) && suggestions.length > 0) {
+                    suggestions.forEach(suggestion => {
                         optimizationSuggestionsEl.innerHTML += `<li>${suggestion}</li>`;
                     });
                 } else {
