@@ -9,7 +9,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <!-- Add untar-js for TAR file extraction support -->
-    <script src="https://cdn.jsdelivr.net/npm/untar-js@0.3.0/untar.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <script>
@@ -26,11 +25,14 @@
         }
     </script>
     <style>
+    /* Tabs container */
     .tabs {
         display: flex;
         background: #ecf0f1;
         border-bottom: 2px solid #ccc;
     }
+
+    /* Each tab */
     .tab {
         flex: 1;
         text-align: center;
@@ -39,19 +41,25 @@
         font-weight: 600;
         transition: background 0.3s;
     }
+
+    /* Active tab */
     .tab.active {
         background: #2c3e50;
         color: #fff;
     }
+
+    /* Hover effect */
     .tab:hover {
         background: #bdc3c7;
     }
+
+    /* Content area */
     #tab-content {
         padding: 20px;
         height: 400px;
         overflow-y: auto;
-        white-space: pre-wrap;
-        font-family: monospace;
+        white-space: pre-wrap; /* Preserves newlines & spacing */
+        font-family: monospace; /* Makes it look like a report */
         font-size: 14px;
         background: #fff;
         border-radius: 0 0 8px 8px;
@@ -68,6 +76,7 @@
             <div class="hidden md:flex space-x-6">
                 <a href="index.html" class="text-gray-600 hover:text-primary transition-colors">Home</a>
                 <a href="upload.html" class="text-gray-600 hover:text-primary transition-colors">Upload</a>
+               <!-- <a href="#" class="text-gray-600 hover:text-primary transition-colors">Documentation</a> -->
             </div>
             <button class="md:hidden text-gray-600">
                 <i class="fas fa-bars text-xl"></i>
@@ -226,6 +235,7 @@
 
                 <section id="results-section" class="bg-white rounded-xl shadow-md overflow-hidden p-6 hidden">
                     <h2 class="text-2xl font-bold text-dark mb-6">Analysis Results</h2>
+                    
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                         <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
                             <h3 class="font-semibold text-gray-700 mb-2">Security Score</h3>
@@ -240,20 +250,22 @@
                             <div id="gas-efficiency" class="text-3xl font-bold text-yellow-500">--</div>
                         </div>
                     </div>
+
                     <div class="mb-8">
                         <h3 class="text-xl font-semibold text-dark mb-4">Vulnerability Details</h3>
                         <div class="tabs mb-4">
-                            <button class="tab active" data-tab="overview">Overview</button>
-                            <button class="tab" data-tab="testing">Testing</button>
-                            <button class="tab" data-tab="security">Security</button>
-                            <button class="tab" data-tab="code_quality">Code Quality</button>
-                            <button class="tab" data-tab="performance">Performance</button>
-                            <button class="tab" data-tab="ai_summary">AI Summary</button>
-                        </div>
-                        <div id="tab-content" class="bg-gray-50 p-4 rounded-lg border border-gray-200 text-sm min-h-[120px]">
-                            <!-- Section content will appear here -->
-                        </div>
+    <button class="tab active" data-tab="overview">Overview</button>
+    <button class="tab" data-tab="testing">Testing</button>
+    <button class="tab" data-tab="security">Security</button>
+    <button class="tab" data-tab="code_quality">Code Quality</button>
+    <button class="tab" data-tab="performance">Performance</button>
+    <button class="tab" data-tab="ai_summary">AI Summary</button>
+</div>
+<div id="tab-content" class="bg-gray-50 p-4 rounded-lg border border-gray-200 text-sm min-h-[120px]">
+        <!-- Section content will appear here -->
+    </div>
                     </div>
+
                     <div>
                         <h3 class="text-xl font-semibold text-dark mb-4">Optimization Suggestions</h3>
                         <ul id="optimization-suggestions" class="list-disc pl-5 space-y-2 text-gray-700">
@@ -322,6 +334,7 @@
         const scoreEl = document.getElementById('score');
         const vulnerabilitiesEl = document.getElementById('vulnerabilities');
         const gasEfficiencyEl = document.getElementById('gas-efficiency');
+        const vulnerabilityDetailsEl = document.getElementById('vulnerability-details');
         const optimizationSuggestionsEl = document.getElementById('optimization-suggestions');
         let selectedFile = null;
 
@@ -340,10 +353,12 @@
                 if (platform && blockchainFileTypes[platform.value]) {
                     return blockchainFileTypes[platform.value];
                 }
+                // Default to rust if none selected
                 return blockchainFileTypes.rust;
             } else if (blockchainFileTypes[selectedBlockchain]) {
                 return blockchainFileTypes[selectedBlockchain];
             }
+            // Default fallback
             return blockchainFileTypes.rust;
         }
 
@@ -352,6 +367,8 @@
             fileInput.setAttribute('accept', type.accept);
             fileSupportText.innerHTML = `Supports: <span class="font-mono">${type.label}</span> files for ${type.platform} (max 10MB)`;
             readyAnalysisText.textContent = type.analysis;
+
+            // Reset UI if blockchain/platform changes
             fileInput.value = '';
             selectedFile = null;
             uploadDefault.classList.remove('hidden');
@@ -374,6 +391,7 @@
             radio.addEventListener('change', updateUploadArea);
         });
 
+        // Call once on page load to set initial state
         updateUploadArea();
 
         // Drag and drop events
@@ -445,99 +463,127 @@
         }
 
         // Upload logic (send file to backend)
-        let reportSections = {};
+        let reportSections = {}; // to store parsed sections
 
-        function parseReport(rawText) {
-            const sections = {
-                overview: '',
-                testing: '',
-                security: '',
-                code_quality: '',
-                performance: '',
-                ai_summary: ''
-            };
-            const patterns = {
-                overview: /1\. OVERVIEW([\s\S]*?)(?=2\. TESTING|$)/,
-                testing: /2\. TESTING([\s\S]*?)(?=3\. SECURITY|$)/,
-                security: /3\. SECURITY([\s\S]*?)(?=4\. CODE QUALITY|$)/,
-                code_quality: /4\. CODE QUALITY([\s\S]*?)(?=5\. PERFORMANCE|$)/,
-                performance: /5\. PERFORMANCE([\s\S]*?)(?=6\. AI SUMMARY|$)/,
-                ai_summary: /6\. AI SUMMARY([\s\S]*?)(?=$)/
-            };
-            for (const key in patterns) {
-                const match = rawText.match(patterns[key]);
-                sections[key] = match ? match[1].trim() : 'No data available.';
-            }
-            return sections;
+function parseReport(rawText) {
+    const sections = {
+        overview: '',
+        testing: '',
+        security: '',
+        code_quality: '',
+        performance: '',
+        ai_summary: ''
+    };
+
+    const patterns = {
+        overview: /1\. OVERVIEW([\s\S]*?)(?=2\. TESTING|$)/,
+        testing: /2\. TESTING([\s\S]*?)(?=3\. SECURITY|$)/,
+        security: /3\. SECURITY([\s\S]*?)(?=4\. CODE QUALITY|$)/,
+        code_quality: /4\. CODE QUALITY([\s\S]*?)(?=5\. PERFORMANCE|$)/,
+        performance: /5\. PERFORMANCE([\s\S]*?)(?=6\. AI SUMMARY|$)/,
+        ai_summary: /6\. AI SUMMARY([\s\S]*?)(?=$)/}
+    ;
+
+    for (const key in patterns) {
+        const match = rawText.match(patterns[key]);
+        sections[key] = match ? match[1].trim() : 'No data available.';
+    }
+
+    return sections;
+}
+
+function uploadFile() {
+    if (!selectedFile) return;
+
+    // Determine endpoint based on blockchain/platform
+    let selectedBlockchain = blockchainOptions.querySelector('input[name="blockchain"]:checked').value;
+    let endpoint = '';
+    if (selectedBlockchain === 'evm') {
+        endpoint = 'upload-evm';
+    } else if (selectedBlockchain === 'nonevm') {
+        const platform = document.querySelector('input[name="nonevm-platform"]:checked');
+        if (platform) {
+            if (platform.value === 'rust') endpoint = 'upload-non-evm';
+            else if (platform.value === 'algorand') endpoint = 'upload-non-evm-algorand';
+            else if (platform.value === 'starknet') endpoint = 'upload-non-evm-starknet';
         }
+    }
 
-        function uploadFile() {
-            if (!selectedFile) return;
-            let selectedBlockchain = blockchainOptions.querySelector('input[name="blockchain"]:checked').value;
-            let endpoint = '';
-            if (selectedBlockchain === 'evm') {
-                endpoint = 'upload-evm';
-            } else if (selectedBlockchain === 'nonevm') {
-                const platform = document.querySelector('input[name="nonevm-platform"]:checked');
-                if (platform) {
-                    if (platform.value === 'rust') endpoint = 'upload-non-evm';
-                    else if (platform.value === 'algorand') endpoint = 'upload-non-evm-algorand';
-                    else if (platform.value === 'starknet') endpoint = 'upload-non-evm-starknet';
-                }
-            }
-            if (!endpoint) {
-                alert('Please select a valid blockchain/platform.');
-                return;
-            }
-            const formData = new FormData();
-            formData.append('contract_file', selectedFile);
-            analyzeBtn.disabled = true;
-            analyzeBtn.textContent = "Analyzing...";
-            fetch(`https://smarttesthub-backend-825503036201.europe-west1.run.app/${endpoint}`, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.text())
-            .then(rawReport => {
-                reportSections = parseReport(rawReport);
-                resultsSection.classList.remove('hidden');
-                document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-                document.querySelector('.tab[data-tab="overview"]').classList.add('active');
-                document.getElementById('tab-content').textContent = reportSections.overview || 'No data available.';
-                scoreEl.textContent = '--';
-                vulnerabilitiesEl.textContent = '--';
-                gasEfficiencyEl.textContent = '--';
-                optimizationSuggestionsEl.innerHTML = '';
-                sessionStorage.setItem('contract_name', selectedFile.name);
-                sessionStorage.setItem('analyzed_date', new Date().toLocaleString());
-                sessionStorage.setItem('smarttesthub_report', JSON.stringify(reportSections));
-                window.location.href = 'results.html';
-            })
-            .catch(err => {
-                analyzeBtn.disabled = false;
-                analyzeBtn.textContent = getSelectedType().btn;
-                document.getElementById('tab-content').textContent = 'Error fetching report: ' + err;
-            })
-            .finally(() => {
-                analyzeBtn.disabled = false;
-                analyzeBtn.textContent = getSelectedType().btn;
-            });
-        }
+    if (!endpoint) {
+        alert('Please select a valid blockchain/platform.');
+        return;
+    }
 
-        // Tab click logic
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelector('.tab.active').classList.remove('active');
-                tab.classList.add('active');
-                const section = tab.dataset.tab;
-                const tabContent = document.getElementById('tab-content');
-                tabContent.textContent = reportSections[section] || 'Please upload a file first.';
-            });
+    const formData = new FormData();
+    formData.append('contract_file', selectedFile);
+
+    analyzeBtn.disabled = true;
+    analyzeBtn.textContent = "Analyzing...";
+
+    fetch(`https://smarttesthub-backend-825503036201.europe-west1.run.app/${endpoint}`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.text()) // Expect plain text report
+    .then(rawReport => {
+        reportSections = parseReport(rawReport);
+
+        resultsSection.classList.remove('hidden');
+        // Show first section by default
+        document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+        document.querySelector('.tab[data-tab="overview"]').classList.add('active');
+        document.getElementById('tab-content').innerHTML = marked.parse(reportSections.overview || 'No data available.');
+
+
+        // Optionally clear other fields
+        scoreEl.textContent = '--';
+        vulnerabilitiesEl.textContent = '--';
+        gasEfficiencyEl.textContent = '--';
+        optimizationSuggestionsEl.innerHTML = '';
+
+        // Save contract name and date
+        sessionStorage.setItem('contract_name', selectedFile.name);
+        sessionStorage.setItem('analyzed_date', new Date().toLocaleString());
+
+        // Save to sessionStorage and redirect
+        sessionStorage.setItem('smarttesthub_report', JSON.stringify(reportSections));
+        window.location.href = 'results.html';
+    })
+    .catch(err => {
+        analyzeBtn.disabled = false;
+        analyzeBtn.textContent = getSelectedType().btn;
+        document.getElementById('tab-content').textContent = 'Error fetching report: ' + err;
+    })
+    .finally(() => {
+        analyzeBtn.disabled = false;
+        analyzeBtn.textContent = getSelectedType().btn;
+    });
+}
+
+// Tab click logic
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove active class from current tab
+            document.querySelector('.tab.active').classList.remove('active');
+
+            // Add active to clicked tab
+            tab.classList.add('active');
+
+            // Get the section name
+            const section = tab.dataset.tab;
+
+            // Display the correct section
+            const tabContent = document.getElementById('tab-content');
+            tabContent.innerHTML = marked.parse(reportSections[section] || 'Please upload a file first.');
+
         });
-
+    });
+});
         // Sidebar dropdown logic for Non-EVM
         const nonevmRadio = document.getElementById('nonevm-radio');
         const platformSelectContainer = document.getElementById('platform-select-container');
+
         blockchainRadios.forEach(radio => {
             radio.addEventListener('change', function() {
                 if (nonevmRadio.checked) {
@@ -545,84 +591,6 @@
                 } else {
                     platformSelectContainer.classList.add('hidden');
                 }
-            });
-        });
-
-        // Dynamic backend values (replace with actual data from API/backend)
-        const containerType = "evm-container";  // Example: dynamic from backend
-        const baseFileName = "storage_23";      // Example: dynamic from backend
-        const fileName = `${baseFileName}-report.txt`; // Append -report.txt
-
-        // Construct archive URL
-        const reportUrl = `https://dockerapi.smarttesthub.live/containers/${containerType}/archive?path=/app/logs/reports/${fileName}`;
-
-        // Tabs & content container
-        const tabContent = document.getElementById('tab-content');
-        // let reportSections = {}; // To store parsed sections
-
-        // Fetch and process report
-        fetch(reportUrl)
-            .then(response => {
-                if (!response.ok) throw new Error("Failed to fetch archive");
-                return response.arrayBuffer();
-            })
-            .then(arrayBuffer => untar(arrayBuffer))
-            .then(files => {
-                const reportFile = files.find(f => f.name.endsWith(".txt"));
-                if (!reportFile) throw new Error("Report file not found in archive");
-
-                const rawText = new TextDecoder().decode(reportFile.buffer);
-
-                // Clean up the text
-                const cleanedReport = rawText.replace(/\\+/g, '').trim();
-
-
-                // Parse the report into sections
-                reportSections = parseReport(cleanedReport);
-
-                // Display default tab
-                tabContent.innerHTML = marked.parse(reportSections.overview || "No data available.");
-            })
-            .catch(err => {
-                console.error(err);
-                tabContent.textContent = "Error loading report.";
-            });
-
-        // Function to parse report into sections
-        function parseReport(rawText) {
-            const sections = {
-                overview: '',
-                testing: '',
-                security: '',
-                code_quality: '',
-                performance: '',
-                ai_summary: ''
-            };
-
-            const patterns = {
-                overview: /1\. OVERVIEW([\s\S]*?)(?=2\. TESTING|$)/,
-                testing: /2\. TESTING([\s\S]*?)(?=3\. SECURITY|$)/,
-                security: /3\. SECURITY([\s\S]*?)(?=4\. CODE QUALITY|$)/,
-                code_quality: /4\. CODE QUALITY([\s\S]*?)(?=5\. PERFORMANCE|$)/,
-                performance: /5\. PERFORMANCE([\s\S]*?)(?=6\. AI SUMMARY|$)/,
-                ai_summary: /6\. AI SUMMARY([\s\S]*?)(?=$)/
-            };
-
-            for (const key in patterns) {
-                const match = rawText.match(patterns[key]);
-                sections[key] = match ? match[1].trim() : 'No data available.';
-            }
-
-            return sections;
-        }
-
-        // Tab click handler
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelector('.tab.active').classList.remove('active');
-                tab.classList.add('active');
-                const section = tab.dataset.tab;
-                tabContent.innerHTML = marked.parse(reportSections[section] || "No data available.");
             });
         });
     </script>
