@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <!-- Add untar-js for TAR file extraction support -->
     <script src="https://cdn.jsdelivr.net/npm/untar-js@0.3.0/untar.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -443,7 +445,7 @@
         }
 
         // Upload logic (send file to backend)
-        let reportSections = {};
+        //let reportSections = {};
 
         function parseReport(rawText) {
             const sections = {
@@ -556,7 +558,7 @@
 
         // Tabs & content container
         const tabContent = document.getElementById('tab-content');
-        // let reportSections = {}; // To store parsed sections
+        let reportSections = {}; // To store parsed sections
 
         // Fetch and process report
         fetch(reportUrl)
