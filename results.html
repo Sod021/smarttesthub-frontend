@@ -100,15 +100,7 @@
             ? `Analyzed on ${sessionStorage.getItem('analyzed_date')}`
             : '';
 
-        function cleanReportText(text) {
-            return text
-                .replace(/[*]+/g, '')               // Remove asterisks
-                .replace(/\\/g, '')                // Remove backslashes
-                .replace(/\n/g, '<br>')            // Convert new lines to <br>
-                .replace(/([a-zA-Z0-9])\.\s/g, '$1. ') // Fix spacing after periods
-                .replace(/\s+/g, ' ')              // Normalize spaces
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Bold markdown
-        }
+       
 
         // Tab switching logic
         document.querySelectorAll('.tab').forEach(tab => {

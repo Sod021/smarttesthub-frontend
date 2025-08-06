@@ -9,7 +9,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <!-- Add untar-js for TAR file extraction support -->
-    <script src="https://cdn.jsdelivr.net/npm/untar-js@0.3.0/untar.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -531,7 +532,8 @@ function uploadFile() {
         // Show first section by default
         document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
         document.querySelector('.tab[data-tab="overview"]').classList.add('active');
-        document.getElementById('tab-content').textContent = reportSections.overview || 'No data available.';
+        document.getElementById('tab-content').innerHTML = marked.parse(reportSections.overview || 'No data available.');
+
 
         // Optionally clear other fields
         scoreEl.textContent = '--';
@@ -573,7 +575,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Display the correct section
             const tabContent = document.getElementById('tab-content');
-            tabContent.textContent = reportSections[section] || 'Please upload a file first.';
+            tabContent.innerHTML = marked.parse(reportSections[section] || 'Please upload a file first.');
+
         });
     });
 });
