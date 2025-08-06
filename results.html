@@ -100,13 +100,24 @@
             ? `Analyzed on ${sessionStorage.getItem('analyzed_date')}`
             : '';
 
+        function cleanReportText(text) {
+            return text
+                .replace(/[*]+/g, '')               // Remove asterisks
+                .replace(/\\/g, '')                // Remove backslashes
+                .replace(/\n/g, '<br>')            // Convert new lines to <br>
+                .replace(/([a-zA-Z0-9])\.\s/g, '$1. ') // Fix spacing after periods
+                .replace(/\s+/g, ' ')              // Normalize spaces
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Bold markdown
+        }
+
         // Tab switching logic
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', () => {
                 document.querySelector('.tab.active').classList.remove('active');
                 tab.classList.add('active');
                 const section = tab.dataset.tab;
-                document.getElementById('tab-content').textContent = reportSections[section] || 'No data available.';
+                const tabContent = document.getElementById('tab-content');
+                tabContent.innerHTML = cleanReportText(reportSections[section] || 'No data available.');
             });
         });
 
