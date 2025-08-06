@@ -537,6 +537,10 @@ function uploadFile() {
         gasEfficiencyEl.textContent = '--';
         optimizationSuggestionsEl.innerHTML = '';
 
+        // Save contract name and date
+        sessionStorage.setItem('contract_name', selectedFile.name);
+        sessionStorage.setItem('analyzed_date', new Date().toLocaleString());
+
         // Save to sessionStorage and redirect
         sessionStorage.setItem('smarttesthub_report', JSON.stringify(reportSections));
         window.location.href = 'results.html';

@@ -54,6 +54,16 @@
     </header>
 
     <main class="container mx-auto px-4 py-8">
+        <a href="upload.html" class="text-blue-600 hover:underline flex items-center mb-6 font-medium text-base">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Upload
+        </a>
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8 max-w-4xl mx-auto">
+            <h2 class="text-2xl font-bold text-dark mb-2">Security Analysis Report</h2>
+            <div class="text-gray-700 text-base mb-1">
+                Contract: <span id="contract-name" class="font-semibold text-primary"></span>
+            </div>
+            <div class="text-gray-400 text-sm" id="analyzed-date"></div>
+        </div>
         <section class="bg-white rounded-xl shadow-md overflow-hidden p-6 max-w-4xl mx-auto">
             <h2 class="text-2xl font-bold text-dark mb-6">Analysis Results</h2>
             <div class="mb-8">
@@ -83,6 +93,12 @@
         } catch (e) {
             reportSections = {};
         }
+
+        // Example: If you stored contract name and date in sessionStorage, set them here
+        document.getElementById('contract-name').textContent = sessionStorage.getItem('contract_name') || 'Unknown';
+        document.getElementById('analyzed-date').textContent = sessionStorage.getItem('analyzed_date')
+            ? `Analyzed on ${sessionStorage.getItem('analyzed_date')}`
+            : '';
 
         // Tab switching logic
         document.querySelectorAll('.tab').forEach(tab => {
