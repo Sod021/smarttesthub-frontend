@@ -536,6 +536,10 @@ function uploadFile() {
         vulnerabilitiesEl.textContent = '--';
         gasEfficiencyEl.textContent = '--';
         optimizationSuggestionsEl.innerHTML = '';
+
+        // Save to sessionStorage and redirect
+        sessionStorage.setItem('smarttesthub_report', JSON.stringify(reportSections));
+        window.location.href = 'results.html';
     })
     .catch(err => {
         analyzeBtn.disabled = false;
