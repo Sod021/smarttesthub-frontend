@@ -445,7 +445,7 @@
         }
 
         // Upload logic (send file to backend)
-        //let reportSections = {};
+        let reportSections = {};
 
         function parseReport(rawText) {
             const sections = {
@@ -558,7 +558,7 @@
 
         // Tabs & content container
         const tabContent = document.getElementById('tab-content');
-        let reportSections = {}; // To store parsed sections
+        // let reportSections = {}; // To store parsed sections
 
         // Fetch and process report
         fetch(reportUrl)
@@ -574,16 +574,14 @@
                 const rawText = new TextDecoder().decode(reportFile.buffer);
 
                 // Clean up the text
-                const cleanedReport = rawText
-                    .replace(/[*]{2,}/g, '')  // remove multiple asterisks
-                    .replace(/[\/]{2,}/g, '') // remove multiple slashes
-                    .trim();
+                const cleanedReport = rawText.replace(/\\+/g, '').trim();
+
 
                 // Parse the report into sections
                 reportSections = parseReport(cleanedReport);
 
                 // Display default tab
-                tabContent.textContent = reportSections.overview || "No data available.";
+                tabContent.innerHTML = marked.parse(reportSections.overview || "No data available.");
             })
             .catch(err => {
                 console.error(err);
@@ -624,7 +622,7 @@
                 document.querySelector('.tab.active').classList.remove('active');
                 tab.classList.add('active');
                 const section = tab.dataset.tab;
-                tabContent.textContent = reportSections[section] || "No data available.";
+                tabContent.innerHTML = marked.parse(reportSections[section] || "No data available.");
             });
         });
     </script>
