@@ -21,6 +21,47 @@
             }
         }
     </script>
+    <style>
+    /* Tabs container */
+    .tabs {
+        display: flex;
+        background: #ecf0f1;
+        border-bottom: 2px solid #ccc;
+    }
+
+    /* Each tab */
+    .tab {
+        flex: 1;
+        text-align: center;
+        padding: 14px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background 0.3s;
+    }
+
+    /* Active tab */
+    .tab.active {
+        background: #2c3e50;
+        color: #fff;
+    }
+
+    /* Hover effect */
+    .tab:hover {
+        background: #bdc3c7;
+    }
+
+    /* Content area */
+    #tab-content {
+        padding: 20px;
+        height: 400px;
+        overflow-y: auto;
+        white-space: pre-wrap; /* Preserves newlines & spacing */
+        font-family: monospace; /* Makes it look like a report */
+        font-size: 14px;
+        background: #fff;
+        border-radius: 0 0 8px 8px;
+    }
+    </style>
 </head>
 <body class="min-h-screen bg-gray-50">
     <header class="bg-white shadow-sm">
@@ -209,15 +250,15 @@
 
                     <div class="mb-8">
                         <h3 class="text-xl font-semibold text-dark mb-4">Vulnerability Details</h3>
-                        <div class="flex space-x-2 mb-4">
-        <button class="tab active px-3 py-1 rounded bg-blue-100 text-blue-700 font-semibold" data-tab="overview">Overview</button>
-        <button class="tab px-3 py-1 rounded bg-gray-100 text-gray-700" data-tab="testing">Testing</button>
-        <button class="tab px-3 py-1 rounded bg-gray-100 text-gray-700" data-tab="security">Security</button>
-        <button class="tab px-3 py-1 rounded bg-gray-100 text-gray-700" data-tab="code_quality">Code Quality</button>
-        <button class="tab px-3 py-1 rounded bg-gray-100 text-gray-700" data-tab="performance">Performance</button>
-        <button class="tab px-3 py-1 rounded bg-gray-100 text-gray-700" data-tab="ai_summary">AI Summary</button>
-    </div>
-    <div id="tab-content" class="bg-gray-50 p-4 rounded-lg border border-gray-200 text-sm min-h-[120px]">
+                        <div class="tabs mb-4">
+    <button class="tab active" data-tab="overview">Overview</button>
+    <button class="tab" data-tab="testing">Testing</button>
+    <button class="tab" data-tab="security">Security</button>
+    <button class="tab" data-tab="code_quality">Code Quality</button>
+    <button class="tab" data-tab="performance">Performance</button>
+    <button class="tab" data-tab="ai_summary">AI Summary</button>
+</div>
+<div id="tab-content" class="bg-gray-50 p-4 rounded-lg border border-gray-200 text-sm min-h-[120px]">
         <!-- Section content will appear here -->
     </div>
                     </div>
@@ -511,10 +552,18 @@ function uploadFile() {
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.tab').forEach(tab => {
         tab.addEventListener('click', () => {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            // Remove active class from current tab
+            document.querySelector('.tab.active').classList.remove('active');
+
+            // Add active to clicked tab
             tab.classList.add('active');
+
+            // Get the section name
             const section = tab.dataset.tab;
-            document.getElementById('tab-content').textContent = reportSections[section] || 'Please upload a file first.';
+
+            // Display the correct section
+            const tabContent = document.getElementById('tab-content');
+            tabContent.textContent = reportSections[section] || 'Please upload a file first.';
         });
     });
 });
