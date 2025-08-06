@@ -532,8 +532,7 @@ function uploadFile() {
         // Show first section by default
         document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
         document.querySelector('.tab[data-tab="overview"]').classList.add('active');
-        document.getElementById('tab-content').innerHTML = marked.parse(reportSections.overview || 'No data available.');
-
+        document.getElementById('tab-content').textContent = reportSections.overview || 'No data available.';
 
         // Optionally clear other fields
         scoreEl.textContent = '--';
@@ -575,8 +574,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Display the correct section
             const tabContent = document.getElementById('tab-content');
-            tabContent.innerHTML = marked.parse(reportSections[section] || 'Please upload a file first.');
-
+            tabContent.textContent = reportSections[section] || 'Please upload a file first.';
         });
     });
 });
