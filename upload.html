@@ -545,6 +545,86 @@
                 }
             });
         });
+
+        // Dynamic backend values (replace with actual data from API/backend)
+        const containerType = "evm-container";  // Example: dynamic from backend
+        const baseFileName = "storage_23";      // Example: dynamic from backend
+        const fileName = `${baseFileName}-report.txt`; // Append -report.txt
+
+        // Construct archive URL
+        const reportUrl = `https://dockerapi.smarttesthub.live/containers/${containerType}/archive?path=/app/logs/reports/${fileName}`;
+
+        // Tabs & content container
+        const tabContent = document.getElementById('tab-content');
+        // let reportSections = {}; // To store parsed sections
+
+        // Fetch and process report
+        fetch(reportUrl)
+            .then(response => {
+                if (!response.ok) throw new Error("Failed to fetch archive");
+                return response.arrayBuffer();
+            })
+            .then(arrayBuffer => untar(arrayBuffer))
+            .then(files => {
+                const reportFile = files.find(f => f.name.endsWith(".txt"));
+                if (!reportFile) throw new Error("Report file not found in archive");
+
+                const rawText = new TextDecoder().decode(reportFile.buffer);
+
+                // Clean up the text
+                const cleanedReport = rawText
+                    .replace(/[*]{2,}/g, '')  // remove multiple asterisks
+                    .replace(/[\/]{2,}/g, '') // remove multiple slashes
+                    .trim();
+
+                // Parse the report into sections
+                reportSections = parseReport(cleanedReport);
+
+                // Display default tab
+                tabContent.textContent = reportSections.overview || "No data available.";
+            })
+            .catch(err => {
+                console.error(err);
+                tabContent.textContent = "Error loading report.";
+            });
+
+        // Function to parse report into sections
+        function parseReport(rawText) {
+            const sections = {
+                overview: '',
+                testing: '',
+                security: '',
+                code_quality: '',
+                performance: '',
+                ai_summary: ''
+            };
+
+            const patterns = {
+                overview: /1\. OVERVIEW([\s\S]*?)(?=2\. TESTING|$)/,
+                testing: /2\. TESTING([\s\S]*?)(?=3\. SECURITY|$)/,
+                security: /3\. SECURITY([\s\S]*?)(?=4\. CODE QUALITY|$)/,
+                code_quality: /4\. CODE QUALITY([\s\S]*?)(?=5\. PERFORMANCE|$)/,
+                performance: /5\. PERFORMANCE([\s\S]*?)(?=6\. AI SUMMARY|$)/,
+                ai_summary: /6\. AI SUMMARY([\s\S]*?)(?=$)/
+            };
+
+            for (const key in patterns) {
+                const match = rawText.match(patterns[key]);
+                sections[key] = match ? match[1].trim() : 'No data available.';
+            }
+
+            return sections;
+        }
+
+        // Tab click handler
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelector('.tab.active').classList.remove('active');
+                tab.classList.add('active');
+                const section = tab.dataset.tab;
+                tabContent.textContent = reportSections[section] || "No data available.";
+            });
+        });
     </script>
 </body>
 </html>
