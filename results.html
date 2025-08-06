@@ -5,6 +5,7 @@
     <title>SmartTestHub - Analysis Results</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         .tabs {
@@ -109,7 +110,7 @@
                 tab.classList.add('active');
                 const section = tab.dataset.tab;
                 const tabContent = document.getElementById('tab-content');
-                tabContent.innerHTML = cleanReportText(reportSections[section] || 'No data available.');
+                tabContent.innerHTML = marked.parse(reportSections[section] || 'No data available.');
             });
         });
 
