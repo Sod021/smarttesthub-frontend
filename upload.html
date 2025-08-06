@@ -466,6 +466,9 @@
         let reportSections = {}; // to store parsed sections
 
 function parseReport(rawText) {
+    // Convert escaped \n into real line breaks
+    const normalizedText = rawText.replace(/\\n/g, '\n');
+
     const sections = {
         overview: '',
         testing: '',
@@ -481,16 +484,17 @@ function parseReport(rawText) {
         security: /3\. SECURITY([\s\S]*?)(?=4\. CODE QUALITY|$)/,
         code_quality: /4\. CODE QUALITY([\s\S]*?)(?=5\. PERFORMANCE|$)/,
         performance: /5\. PERFORMANCE([\s\S]*?)(?=6\. AI SUMMARY|$)/,
-        ai_summary: /6\. AI SUMMARY([\s\S]*?)(?=$)/}
-    ;
+        ai_summary: /6\. AI SUMMARY([\s\S]*?)(?=$)/
+    };
 
     for (const key in patterns) {
-        const match = rawText.match(patterns[key]);
+        const match = normalizedText.match(patterns[key]);
         sections[key] = match ? match[1].trim() : 'No data available.';
     }
 
     return sections;
 }
+
 
 function uploadFile() {
     if (!selectedFile) return;
@@ -521,43 +525,38 @@ function uploadFile() {
     analyzeBtn.textContent = "Analyzing...";
 
     fetch(`https://smarttesthub-backend-825503036201.europe-west1.run.app/${endpoint}`, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.text()) // Expect plain text report
-    .then(rawReport => {
-        reportSections = parseReport(rawReport);
+    method: 'POST',
+    body: formData
+})
+.then(response => response.json()) // ✅ Expect JSON
+.then(data => {
+    const rawReport = data.aggregated_report || '';
+    const formattedReport = rawReport.replace(/\\n/g, '\n'); // fix escaped \n
+    const reportSections = parseReport(formattedReport);
 
-        resultsSection.classList.remove('hidden');
-        // Show first section by default
-        document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-        document.querySelector('.tab[data-tab="overview"]').classList.add('active');
-        document.getElementById('tab-content').innerHTML = marked.parse(reportSections.overview || 'No data available.');
+    // Display first tab
+    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelector('.tab[data-tab="overview"]').classList.add('active');
+    document.getElementById('tab-content').innerHTML = marked.parse(reportSections.overview || 'No data available.');
 
+    // Save session data
+    sessionStorage.setItem('contract_name', selectedFile.name);
+    sessionStorage.setItem('analyzed_date', new Date().toLocaleString());
+    sessionStorage.setItem('smarttesthub_report', JSON.stringify(reportSections));
 
-        // Optionally clear other fields
-        scoreEl.textContent = '--';
-        vulnerabilitiesEl.textContent = '--';
-        gasEfficiencyEl.textContent = '--';
-        optimizationSuggestionsEl.innerHTML = '';
+    // Redirect if needed
+    window.location.href = 'results.html';
+})
+.catch(err => {
+    analyzeBtn.disabled = false;
+    analyzeBtn.textContent = getSelectedType().btn;
+    document.getElementById('tab-content').textContent = 'Error fetching report: ' + err;
+})
+.finally(() => {
+    analyzeBtn.disabled = false;
+    analyzeBtn.textContent = getSelectedType().btn;
+});
 
-        // Save contract name and date
-        sessionStorage.setItem('contract_name', selectedFile.name);
-        sessionStorage.setItem('analyzed_date', new Date().toLocaleString());
-
-        // Save to sessionStorage and redirect
-        sessionStorage.setItem('smarttesthub_report', JSON.stringify(reportSections));
-        window.location.href = 'results.html';
-    })
-    .catch(err => {
-        analyzeBtn.disabled = false;
-        analyzeBtn.textContent = getSelectedType().btn;
-        document.getElementById('tab-content').textContent = 'Error fetching report: ' + err;
-    })
-    .finally(() => {
-        analyzeBtn.disabled = false;
-        analyzeBtn.textContent = getSelectedType().btn;
-    });
 }
 
 // Tab click logic
