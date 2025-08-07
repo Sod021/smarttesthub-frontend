@@ -7,11 +7,68 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- Poppins font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
+        html, body {
+            font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+            background: #2E2E2E;
+        }
+        .text-complementary {
+            color: #E9E9EA;
+        }
+        .bg-dominant {
+            background: #2E2E2E;
+        }
+        .bg-complementary {
+            background: #E9E9EA;
+        }
+        .bg-accent {
+            background: #D6CFE1;
+        }
+        .btn-accent {
+            background: #D6CFE1;
+            color: #2E2E2E;
+            font-weight: 600;
+            transition: background 0.2s;
+            font-family: 'Poppins', sans-serif;
+        }
+        .btn-accent:hover {
+            background: #bdb6c9;
+        }
+        .section-card {
+            background: #232323;
+            color: #E9E9EA;
+            border-radius: 1rem;
+            box-shadow: 0 4px 24px 0 rgba(44,44,44,0.10);
+            font-family: 'Poppins', sans-serif;
+        }
+        .section-card-alt {
+            background: #E9E9EA;
+            color: #2E2E2E;
+            border-radius: 1rem;
+            box-shadow: 0 4px 24px 0 rgba(44,44,44,0.10);
+            font-family: 'Poppins', sans-serif;
+        }
+        .footer-link {
+            color: #E9E9EA;
+            font-family: 'Poppins', sans-serif;
+        }
+        .footer-link:hover {
+            color: #D6CFE1;
+        }
+        /* Transparent header */
+        .header-transparent {
+            background: rgba(46,46,46,0.15);
+            backdrop-filter: blur(8px);
+            box-shadow: none;
+        }
+        /* Tabs container */
         .tabs {
             display: flex;
-            background: #ecf0f1;
+            background: #E9E9EA;
             border-bottom: 2px solid #ccc;
+            border-radius: 8px 8px 0 0;
         }
         .tab {
             flex: 1;
@@ -19,54 +76,76 @@
             padding: 14px;
             cursor: pointer;
             font-weight: 600;
-            transition: background 0.3s;
+            font-family: 'Poppins', sans-serif;
+            transition: background 0.3s, color 0.3s;
+            color: #2E2E2E;
+            background: #E9E9EA;
+            border: none;
         }
         .tab.active {
-            background: #2c3e50;
-            color: #fff;
+            background: #2E2E2E;
+            color: #E9E9EA;
         }
         .tab:hover {
-            background: #bdc3c7;
+            background: #D6CFE1;
+            color: #2E2E2E;
         }
         #tab-content {
             padding: 20px;
-            height: 400px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            font-family: monospace;
-            font-size: 14px;
+            min-height: 120px;
+            font-family: 'Poppins', monospace, Arial, sans-serif;
+            font-size: 15px;
             background: #fff;
             border-radius: 0 0 8px 8px;
+            color: #232323;
+        }
+        #tab-content h1,
+        #tab-content h2,
+        #tab-content h3,
+        #tab-content h4,
+        #tab-content strong {
+            margin-top: 1.2em;
+            margin-bottom: 0.6em;
+            display: block;
+        }
+
+        #tab-content p,
+        #tab-content ul,
+        #tab-content ol {
+            margin-bottom: 1em;
         }
     </style>
 </head>
-<body class="min-h-screen bg-gray-50">
-    <header class="bg-white shadow-sm">
+<body class="min-h-screen bg-dominant">
+    <header class="header-transparent fixed top-0 left-0 w-full z-30">
         <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-2">
-                <i class="fas fa-file-contract text-2xl text-primary"></i>
-                <h1 class="text-xl font-bold text-dark">SmartTestHub</h1>
+                <i class="fas fa-file-contract text-2xl text-accent"></i>
+                <h1 class="text-xl font-bold text-complementary">SmartTestHub</h1>
             </div>
             <div class="hidden md:flex space-x-6">
-                <a href="index.html" class="text-gray-600 hover:text-primary transition-colors">Home</a>
-                <a href="upload.html" class="text-gray-600 hover:text-primary transition-colors">Upload</a>
+                <a href="index.html" class="text-complementary hover:text-accent transition-colors mt-2 font-bold">Home</a>
+                <a href="upload.html" class="border-2 border-accent px-4 py-2 rounded-lg font-medium text-center text-accent hover:bg-accent hover:text-dominant transition-colors">Upload</a>
             </div>
+            <button class="md:hidden text-complementary">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
         </nav>
     </header>
 
-    <main class="container mx-auto px-4 py-8">
-        <a href="upload.html" class="text-blue-600 hover:underline flex items-center mb-6 font-medium text-base">
+    <main class="container mx-auto px-4 py-8" style="margin-top:100px;">
+        <a href="upload.html" class="text-complementary hover:underline flex items-center mb-6 font-medium text-base">
             <i class="fas fa-arrow-left mr-2"></i> Back to Upload
         </a>
-        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8 w-[100%] mx-auto">
-            <h2 class="text-2xl font-bold text-dark mb-2">Security Analysis Report</h2>
-            <div class="text-gray-700 text-base mb-1">
-                Contract: <span id="contract-name" class="font-semibold text-primary"></span>
+        <div class="bg-complementary rounded-2xl shadow-lg p-8 mb-8 w-[100%] mx-auto section-card-alt">
+            <h2 class="text-2xl font-bold text-dominant mb-2">Security Analysis Report</h2>
+            <div class="text-dominant text-base mb-1">
+                Contract: <span id="contract-name" class="font-semibold text-accent"></span>
             </div>
-            <div class="text-gray-400 text-sm" id="analyzed-date"></div>
+            <div class="text-gray-500 text-sm" id="analyzed-date"></div>
         </div>
-        <section class="bg-white rounded-xl shadow-md overflow-hidden p-6 w-[100%] mx-auto">
-            <h2 class="text-2xl font-bold text-dark mb-6">Analysis Results</h2>
+        <section class="section-card overflow-hidden p-6 w-[100%] mx-auto">
+            <h2 class="text-2xl font-bold mb-6 text-accent">Analysis Results</h2>
             <div class="mb-8">
                 <div class="tabs mb-4">
                     <button class="tab active" data-tab="overview">Overview</button>
@@ -76,15 +155,53 @@
                     <button class="tab" data-tab="performance">Performance</button>
                     <button class="tab" data-tab="ai_summary">AI Summary</button>
                 </div>
-                <div id="tab-content" class="bg-gray-50 p-4 rounded-lg border border-gray-200 text-sm min-h-[120px]">
+                <div id="tab-content" class="bg-complementary p-4 rounded-lg border border-accent text-sm min-h-[120px]">
                     <!-- Section content will appear here -->
                 </div>
             </div>
             <div>
-                <a href="upload.html" class="inline-block mt-4 px-6 py-2 rounded bg-primary text-white font-semibold hover:bg-indigo-700 transition">Analyze Another Contract</a>
+                <a href="upload.html" class="btn-accent inline-block mt-4 px-6 py-2 rounded font-semibold transition">Analyze Another Contract</a>
             </div>
         </section>
     </main>
+
+    <footer class="bg-dark text-white py-12 mt-16">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-accent">SmartTestHub</h3>
+                    <p class="text-gray-400">Making blockchain development safer through automated security analysis.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-accent">Product</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="footer-link transition-colors">Features</a></li>
+                        <li><a href="smart-contract-analyzer.html" class="footer-link transition-colors">Analyzer</a></li>
+                        <li><a href="#" class="footer-link transition-colors">Pricing</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-accent">Resources</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="footer-link transition-colors">Documentation</a></li>
+                        <li><a href="#" class="footer-link transition-colors">Blog</a></li>
+                        <li><a href="#" class="footer-link transition-colors">Security Tips</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-accent">Company</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="footer-link transition-colors">About Us</a></li>
+                        <li><a href="#" class="footer-link transition-colors">Contact</a></li>
+                        <li><a href="#" class="footer-link transition-colors">Careers</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-accent mt-12 pt-8 text-center text-complementary">
+                <p>© 2023 Smart Contract Analyzer. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 
     <script>
         // Load reportSections from sessionStorage
@@ -101,8 +218,6 @@
             ? `Analyzed on ${sessionStorage.getItem('analyzed_date')}`
             : '';
 
-       
-
         // Tab switching logic
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', () => {
@@ -116,7 +231,6 @@
 
         // Show first section by default
         document.addEventListener('DOMContentLoaded', function () {
-            // If no report, show error
             if (!reportSections || Object.keys(reportSections).length === 0) {
                 document.getElementById('tab-content').textContent = 'No analysis data found. Please upload and analyze a contract first.';
                 return;
